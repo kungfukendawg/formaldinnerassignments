@@ -1,63 +1,59 @@
 import csv
 import random
 
-alphabeticalDictionary = {'Ahmad, Daanish': 0}
+alphabeticalList = ['Ahmad, Daanish']
+
+class Student:
+    def __init__(self, name):
+        self.name = name
+        self.restrictedStudents = list()
+    def appendName(self, appendedName):
+        self.restrictedStudents.append(appendedName)
 
 # read the namelist.csv
 with open('/Users/Kenny/Desktop/Python/namelist.csv', mode='r', encoding='utf-8-sig') as csv_file:
     csv_reader = csv.DictReader(csv_file)
-    #counter for alphabeticalDictionary values
-    counter = 1
     for row in csv_reader:
-            #add alphabeticalDictionary entries
-            alphabeticalDictionary.update({f'{row["Ahmad"]}, {row["Daanish"]}': counter})
-            counter += 1
+            #add alphabeticalList entries
+            alphabeticalList.append(f'{row["Ahmad"]}, {row["Daanish"]}')
 
-#print(alphabeticalDictionary)
 
-#function to shuffle the dictionary
-def shuffleNames():
-    shuffledKeys = list(alphabeticalDictionary.keys())
-    random.shuffle(shuffledKeys)
-    return shuffledKeys
+listOfObjects = list()
+for i in alphabeticalList:
+    listOfObjects.append(Student(i))
 
-shuffledKeys = shuffleNames()
-#print(shuffledKeys)
+def shuffleObjects(copiedList):
+    shuffledObjects = copiedList.copy()
+    random.shuffle(shuffledObjects)
+    return shuffledObjects
 
-def attachValues():
-    shuffledList = ([(key, alphabeticalDictionary[key]) for key in shuffledKeys])
-    return shuffledList
-    
-shuffledList = attachValues()
-#print(shuffledList)
+shuffledObjects = shuffleObjects(listOfObjects)
 
 def designate():
-    counter = 0
     print('\nKitchen staff:')
     #first 7 people are kitchen staff
-    while counter <= 6:
-        print(shuffledKeys.pop(0))
-        counter += 1
+    for i in range(7):
+        print(shuffledObjects[i].name)
     #next 31 people are waiting
     print('\nWaiters:')
-    for waitingTable in range(31):
-        print(shuffledKeys.pop(0) + f' waiting at table {counter - 6}')
-        counter += 1
-    
+    for waitingTable in range(7,38):
+        print(shuffledObjects[waitingTable].name + f' waiting at table {waitingTable - 6}')
+    #rest are sitting at tables
     print('\nTable seatings:')
-
     tableNumber = 1
-    tableCounter = 1
-    while tableNumber <= 31:
-        print(shuffledKeys.pop(0) + f' sitting at table {tableNumber}')
-        tableCounter += 1
-        if tableCounter % 8 == 0:
+    #first 5 tables have 9 people
+    nineTableCounter = 1
+    for sittingTable in range(38,84):
+        print(shuffledObjects[sittingTable].name + f' sitting at table {tableNumber}')
+        if nineTableCounter % 9 == 0:
             tableNumber += 1
-    remainderTableCounter = 1
-    for name in range(5):
-        print(shuffledKeys.pop(0) + f' sitting at table {remainderTableCounter}')
-        remainderTableCounter += 1
+        nineTableCounter +=1
+    eightTableCounter = 1
+    #rest of the tables have 8 people
+    for sittingTable in range(84,290):
+        print(shuffledObjects[sittingTable].name + f' sitting at table {tableNumber}')
+        eightTableCounter +=1
+        if eightTableCounter % 8 == 0:
+            tableNumber += 1
 
 designate()
-
-#print(shuffledKeys)
