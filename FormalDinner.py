@@ -33,24 +33,29 @@ def designate():
     print('\nKitchen staff:')
     #first 7 people are kitchen staff
     for i in range(7):
-        print(shuffledObjects[i].name)
+        print(shuffledObjects.pop(0).name)
     #next 31 people are waiting
     print('\nWaiters:')
-    for waitingTable in range(7,38):
-        print(shuffledObjects[waitingTable].name + f' waiting at table {waitingTable - 6}')
+    for waitingTable in range(1,31):
+        print(shuffledObjects.pop(0).name + f' waiting at table {waitingTable}')
     #rest are sitting at tables
     print('\nTable seatings:')
     tableNumber = 1
     #first 5 tables have 9 people
     nineTableCounter = 1
-    for sittingTable in range(38,84):
+    #list to temporarily store names to add to Student classes
+    tableList = list()
+    for sittingTable in range(1,46):
         print(shuffledObjects[sittingTable].name + f' sitting at table {tableNumber}')
+        tableList.append(shuffledObjects[sittingTable].name)
         if nineTableCounter % 9 == 0:
+            print(tableList)
+            tableList.clear()
             tableNumber += 1
-        nineTableCounter +=1
+        nineTableCounter += 1
     eightTableCounter = 1
     #rest of the tables have 8 people
-    for sittingTable in range(84,290):
+    for sittingTable in range(46,253):
         print(shuffledObjects[sittingTable].name + f' sitting at table {tableNumber}')
         eightTableCounter +=1
         if eightTableCounter % 8 == 0:
