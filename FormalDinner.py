@@ -1,63 +1,127 @@
 import csv
 import random
 
-alphabeticalDictionary = {'Ahmad, Daanish': 0}
+alphabeticalList = ['Ahmad, Daanish']
+
+class Student:
+    def __init__(self, name):
+        self.name = name
+        self.restrictedStudents = list()
+    def appendName(self, appendedName):
+        self.restrictedStudents.append(appendedName)
 
 # read the namelist.csv
 with open('/Users/Kenny/Desktop/Python/namelist.csv', mode='r', encoding='utf-8-sig') as csv_file:
     csv_reader = csv.DictReader(csv_file)
-    #counter for alphabeticalDictionary values
-    counter = 1
     for row in csv_reader:
-            #add alphabeticalDictionary entries
-            alphabeticalDictionary.update({f'{row["Ahmad"]}, {row["Daanish"]}': counter})
-            counter += 1
+            #add alphabeticalList entries
+            alphabeticalList.append(f'{row["Ahmad"]}, {row["Daanish"]}')
 
-#print(alphabeticalDictionary)
+#convert list of strings to a list of objects
+listOfObjects = list()
+for i in alphabeticalList:
+    listOfObjects.append(Student(i))
 
-#function to shuffle the dictionary
-def shuffleNames():
-    shuffledKeys = list(alphabeticalDictionary.keys())
-    random.shuffle(shuffledKeys)
-    return shuffledKeys
+#shuffle any given list using a shallow copy to keep the objects the same
+def shuffleObjects(copiedList):
+    shuffledObjects = copiedList.copy()
+    random.shuffle(shuffledObjects)
+    return shuffledObjects
 
-shuffledKeys = shuffleNames()
-#print(shuffledKeys)
+firstShuffle = shuffleObjects(listOfObjects)
+secondShuffle = shuffleObjects(listOfObjects)
+thirdShuffle = shuffleObjects(listOfObjects)
 
-def attachValues():
-    shuffledList = ([(key, alphabeticalDictionary[key]) for key in shuffledKeys])
-    return shuffledList
+#function to check if table mates have been repeated
+def checkTableMates(seatsPerTable, importedList):
+    #repeat for every student at the table
+    for student in range(seatsPerTable):
+        #for every student in a restrictedStudents list
+        for restrictedStudent in importedList[student].restrictedStudents:
+            #repeat for every student at the table
+            for tableMate in range(seatsPerTable):
+                # print(restrictedStudent)
+                # print(importedList[tableMate].name)
+                if restrictedStudent == importedList[tableMate].name:
+                    return False
+    return True
+
+def designate(shuffledNames):
     
-shuffledList = attachValues()
-#print(shuffledList)
-
-def designate():
-    counter = 0
     print('\nKitchen staff:')
     #first 7 people are kitchen staff
-    while counter <= 6:
-        print(shuffledKeys.pop(0))
-        counter += 1
+    for i in range(7):
+        print(shuffledNames.pop(0).name)
+    
     #next 31 people are waiting
     print('\nWaiters:')
     for waitingTable in range(31):
-        print(shuffledKeys.pop(0) + f' waiting at table {counter - 6}')
-        counter += 1
+        print(shuffledNames.pop(0).name + f' waiting at table {waitingTable + 1}')
     
+    #rest are sitting at tables
     print('\nTable seatings:')
-
+    #variable to keep track of table number
     tableNumber = 1
-    tableCounter = 1
-    while tableNumber <= 31:
-        print(shuffledKeys.pop(0) + f' sitting at table {tableNumber}')
-        tableCounter += 1
-        if tableCounter % 8 == 0:
-            tableNumber += 1
-    remainderTableCounter = 1
-    for name in range(5):
-        print(shuffledKeys.pop(0) + f' sitting at table {remainderTableCounter}')
-        remainderTableCounter += 1
+    #list to temporarily store names to add to Student classes
+    tableList = list()
+    
+    #make tables of 9 for the first 5 tables
+    for i in range (4):
+        #check if the next 9 students have sat next to each other before
+        #do this 10 times or until all table mates are new
+        #if it still doesn't work, then just move on to prevent the program from crashing
+        for i in range(10):
+            #if table mates are new, move on
+            if checkTableMates(9, shuffledNames) == True:
+                break
+            #if table mates are repeated, shuffle the existing list of Student objects
+            shuffleObjects(shuffledNames)
+        for sittingTable in range(9):
+            print(shuffledNames[sittingTable].name + f' sitting at table {tableNumber}')
+            #add student name to the temporary tableList
+            tableList.append(shuffledNames[sittingTable].name)
+        for studentObject in range(9):
+            #append names of table mates to the students restrictedStudents list
+            for name in tableList:
+                shuffledNames[studentObject].appendName(name)
+            #remove the student's own name from their restrictedStudents List
+            del shuffledNames[studentObject].restrictedStudents[studentObject]
+        tableList.clear()
+        del shuffledNames[:9]
+        tableNumber += 1
+    
+    #SAME AS ABOVE BUT WITH 8 STUDENTS PER TABLE
+    #for the rest 26 tables (from 6-31)
+    for i in range (27):
+        #check if the next 8 students have sat next to each other before
+        #do this 10 times or until all table mates are new
+        #if it still doesn't work, then just move on to prevent the program from crashing
+        for i in range(10):
+            #if table mates are new, move on
+            if checkTableMates(8, shuffledNames) == True:
+                break
+            #if table mates are repeated, shuffle the existing list of Student objects
+            shuffleObjects(shuffledNames)
+        for sittingTable in range(8):
+            print(shuffledNames[sittingTable].name + f' sitting at table {tableNumber}')
+            #add student name to the temporary tableList
+            tableList.append(shuffledNames[sittingTable].name)
+        for studentObject in range(8):
+            #append names of table mates to the students restrictedStudents list
+            for name in tableList:
+                shuffledNames[studentObject].appendName(name)
+            #remove the student's own name from their restrictedStudents List
+            del shuffledNames[studentObject].restrictedStudents[studentObject]
+        tableList.clear()
+        del shuffledNames[:8]
+        tableNumber += 1
 
-designate()
+#print the following onto the terminal
+print('First seating assignment:')
+designate(firstShuffle)
 
-#print(shuffledKeys)
+print('\nSecond seating assignment:')
+designate(secondShuffle)
+
+print('\nThird seating assignment:')
+designate(thirdShuffle)
