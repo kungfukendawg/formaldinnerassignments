@@ -40,9 +40,8 @@ def checkTableMates(seatsPerTable, importedList):
         for restrictedStudent in importedList[student].restrictedStudents:
             #repeat for every student at the table
             for tableMate in range(seatsPerTable):
-                # print(restrictedStudent)
-                # print(importedList[tableMate].name)
-                if restrictedStudent == importedList[tableMate].name:
+                if f'{restrictedStudent}' == f'{importedList[tableMate].name}':
+                    print('found overlap')
                     return False
     return True
 
@@ -68,14 +67,14 @@ def designate(shuffledNames):
     #make tables of 9 for the first 5 tables
     for i in range (4):
         #check if the next 9 students have sat next to each other before
-        #do this 10 times or until all table mates are new
+        #do this 15 times or until all table mates are new
         #if it still doesn't work, then just move on to prevent the program from crashing
-        for i in range(10):
+        for i in range(15):
             #if table mates are new, move on
             if checkTableMates(9, shuffledNames) == True:
                 break
             #if table mates are repeated, shuffle the existing list of Student objects
-            shuffleObjects(shuffledNames)
+            shuffledNames = shuffleObjects(shuffledNames)
         for sittingTable in range(9):
             print(shuffledNames[sittingTable].name + f' sitting at table {tableNumber}')
             #add student name to the temporary tableList
@@ -86,22 +85,25 @@ def designate(shuffledNames):
                 shuffledNames[studentObject].appendName(name)
             #remove the student's own name from their restrictedStudents List
             del shuffledNames[studentObject].restrictedStudents[studentObject]
+        #clear the temporary tableList for reuse
         tableList.clear()
+        #delete the most recent 9 students in the list of student objects
         del shuffledNames[:9]
+        #move onto next table
         tableNumber += 1
     
     #SAME AS ABOVE BUT WITH 8 STUDENTS PER TABLE
     #for the rest 26 tables (from 6-31)
     for i in range (27):
         #check if the next 8 students have sat next to each other before
-        #do this 10 times or until all table mates are new
+        #do this 15 times or until all table mates are new
         #if it still doesn't work, then just move on to prevent the program from crashing
-        for i in range(10):
+        for i in range(15):
             #if table mates are new, move on
             if checkTableMates(8, shuffledNames) == True:
                 break
             #if table mates are repeated, shuffle the existing list of Student objects
-            shuffleObjects(shuffledNames)
+            shuffledNames = shuffleObjects(shuffledNames)
         for sittingTable in range(8):
             print(shuffledNames[sittingTable].name + f' sitting at table {tableNumber}')
             #add student name to the temporary tableList
@@ -112,8 +114,11 @@ def designate(shuffledNames):
                 shuffledNames[studentObject].appendName(name)
             #remove the student's own name from their restrictedStudents List
             del shuffledNames[studentObject].restrictedStudents[studentObject]
+        #clear the temporary tableList for reuse
         tableList.clear()
+        #delete the most recent 8 students in the list of student objects
         del shuffledNames[:8]
+        #move onto next table
         tableNumber += 1
 
 #print the following onto the terminal
