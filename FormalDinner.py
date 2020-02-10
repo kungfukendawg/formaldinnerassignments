@@ -41,7 +41,6 @@ def checkTableMates(seatsPerTable, importedList):
             #repeat for every student at the table
             for tableMate in range(seatsPerTable):
                 if f'{restrictedStudent}' == f'{importedList[tableMate].name}':
-                    print('found overlap')
                     return False
     return True
 
